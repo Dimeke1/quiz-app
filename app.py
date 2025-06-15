@@ -3,7 +3,7 @@ import pandas as pd
 import random
 
 app = Flask(__name__)
-app.secret_key = "super-secret-key-123"  # Можно заменить на любой другой
+app.secret_key = "very-secret-key-456"
 
 # Загружаем Excel-файл с вопросами
 df = pd.read_excel("tzi_questions.xlsx")
@@ -14,7 +14,7 @@ def quiz():
         score = 0
         results = []
 
-        # Получаем те же самые вопросы, которые были показаны пользователю
+        # Получаем список индексов ранее показанных вопросов
         question_ids = session.get("question_ids", [])
 
         for i, qid in enumerate(question_ids):
@@ -40,11 +40,8 @@ def quiz():
         return render_template("quiz.html", done=True, score=score, results=results)
 
     else:
-        # Генерируем 50 случайных вопросов и сохраняем их ID в сессию
+        # Выбираем 50 случайных вопросов
         selected = df.sample(n=50)
-        session["question_ids"] = selected.index.tolist()
-        selected = selected.reset_index()
-        return render_template("quiz.html", questions=selected.iterrows(), done=False)
-
-if __name__ == "__main__":
-    app.run(debug=True)
+        session["question_ids"] = selected.index.tolist()  # сохраняем индексы
+        selected = selected.reset_index()  # сохраняем их как колонку index
+        return r
