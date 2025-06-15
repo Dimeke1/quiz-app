@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+<!DOCTYPE html> 
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
@@ -39,7 +39,7 @@
                     {% for opt in ['A', 'B', 'C', 'D', 'E'] %}
                         <label>
                             <input type="radio" name="q_{{ i }}" value="{{ opt }}" required>
-                            {{ row[opt] }}
+                            <b>{{ opt }})</b> {{ row[opt] }}
                         </label><br>
                     {% endfor %}
                     <input type="hidden" name="qid_{{ i }}" value="{{ row.name }}">
