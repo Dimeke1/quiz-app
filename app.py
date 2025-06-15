@@ -1,10 +1,11 @@
-from flask import Flask, render_template, request
+from flask import Flask, render_template, request, session, redirect, url_for
 import pandas as pd
 import random
 
 app = Flask(__name__)
+app.secret_key = "тут_любой_секретный_ключ"
 
-# Загружаем Excel-файл
+# Загружаем вопросы
 df = pd.read_excel("tzi_questions.xlsx")
 
 @app.route("/", methods=["GET", "POST"])
@@ -13,11 +14,11 @@ def quiz():
         score = 0
         results = []
 
-        for i in range(50):
-            user_answer = request.form.get(f"q_{i}")
-            qid = int(request.form.get(f"qid_{i}"))
-            row = df.loc[qid]
+        question_ids = session.get("question_ids", [])
 
+        for i, qid in enumerate(question_ids):
+            user_answer = request.form.get(f"q_{i}")
+            row = df.loc[qid]
             correct_answer = row["Answer"]
             options = {opt: row[opt] for opt in ['A', 'B', 'C', 'D', 'E']}
 
@@ -37,7 +38,9 @@ def quiz():
         return render_template("quiz.html", done=True, score=score, results=results)
 
     else:
-        selected = df.sample(n=50).reset_index()
+        selected = df.sample(n=50)
+        session["question_ids"] = selected.index.tolist()
+        selected = selected.reset_index()
         return render_template("quiz.html", questions=selected.iterrows(), done=False)
 
 if __name__ == "__main__":
