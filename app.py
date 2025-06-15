@@ -44,4 +44,7 @@ def quiz():
         selected = df.sample(n=50)
         session["question_ids"] = selected.index.tolist()  # сохраняем индексы
         selected = selected.reset_index()  # сохраняем их как колонку index
-        return r
+        return render_template("quiz.html", questions=selected.iterrows(), done=False)
+
+if __name__ == "__main__":
+    app.run(debug=True)
