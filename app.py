@@ -4,8 +4,8 @@ import random
 
 app = Flask(__name__)
 
-# Загрузка всех вопросов из CSV
-df = pd.read_csv("tzi_questions.csv")
+df = pd.read_excel("tzi_questions.xlsx")
+
 
 @app.route("/", methods=["GET", "POST"])
 def quiz():
