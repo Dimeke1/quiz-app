@@ -1,11 +1,11 @@
-from flask import Flask, render_template, request, session, redirect, url_for
+fromfrom flask import Flask, render_template, request, session
 import pandas as pd
 import random
 
 app = Flask(__name__)
-app.secret_key = "тут_любой_секретный_ключ"
+app.secret_key = "super-secret-key-123"  # Можно заменить на любой другой
 
-# Загружаем вопросы
+# Загружаем Excel-файл с вопросами
 df = pd.read_excel("tzi_questions.xlsx")
 
 @app.route("/", methods=["GET", "POST"])
@@ -14,11 +14,13 @@ def quiz():
         score = 0
         results = []
 
+        # Получаем те же самые вопросы, которые были показаны пользователю
         question_ids = session.get("question_ids", [])
 
         for i, qid in enumerate(question_ids):
             user_answer = request.form.get(f"q_{i}")
             row = df.loc[qid]
+
             correct_answer = row["Answer"]
             options = {opt: row[opt] for opt in ['A', 'B', 'C', 'D', 'E']}
 
@@ -38,6 +40,7 @@ def quiz():
         return render_template("quiz.html", done=True, score=score, results=results)
 
     else:
+        # Генерируем 50 случайных вопросов и сохраняем их ID в сессию
         selected = df.sample(n=50)
         session["question_ids"] = selected.index.tolist()
         selected = selected.reset_index()
